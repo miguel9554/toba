@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  toba:
+    image: ${REGISTRY_HOSTNAME?err}toba:${APP_ENVIRONMENT:?err}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PROYECTO_DIR=${PROYECTO_DIR:?err}
+        - APP_ENVIRONMENT=${APP_ENVIRONMENT:?err}
+    ports:
+      - 8000:80
+    volumes:
+      # Para poder cambiar la config sin rebuildear
+      - type: bind
+        source: ./instalador.env
+        target: ${PROYECTO_DIR:?err}/instalador.env
+      # La configuración de Apache
+      - type: volume
+        source: apache-conf
+        target: /etc/apache2/sites-enabled
+    depends_on:
+      - db
+    env_file:
+      - .env
+  db:
+    image: postgres:9.6.17
+    environment:
+      POSTGRES_USER: ${DB_USER:?err}
+      POSTGRES_PASSWORD: ${DB_USER:?err}
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+  toba-data:
+  apache-conf:
+  mapuche-personalizaciones:
+
