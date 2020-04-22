@@ -20,13 +20,24 @@ services:
       - type: volume
         source: apache-conf
         target: /etc/apache2/sites-enabled
+      # Instalación de Toba
+      - type: volume
+        source: toba-data
+        target: ${TOBA_DIR:?err}
+      # Proyecto
+      - type: volume
+        source: proyecto-data
+        target: ${PROYECTO_DIR:?err}
     depends_on:
       - db
+    environment:
+      TOBA_INSTANCIA: toba_tuto
+      TOBA_INSTALACION_DIR: ${TOBA_DIR:?err}
   db:
     image: postgres:9.6.17
     environment:
       POSTGRES_USER: ${DB_USER:?err}
-      POSTGRES_PASSWORD: ${DB_USER:?err}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?err}
     volumes:
       - type: volume
         source: db-data
@@ -43,5 +54,5 @@ volumes:
   db-data:
   toba-data:
   apache-conf:
-  mapuche-personalizaciones:
+  proyecto-data:
 

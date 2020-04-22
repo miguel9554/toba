@@ -37,3 +37,5 @@ ADD composer.json $PROYECTO_DIR
 
 # Instalamos las dependencias
 RUN composer install
+# Por algún motivo no se crea la carpeta bin, lo hacemos a mano
+RUN ln -s vendor/siu-toba/framework/bin/ bin
