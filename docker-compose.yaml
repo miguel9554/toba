@@ -12,10 +12,6 @@ services:
     ports:
       - 8000:80
     volumes:
-      # Para poder cambiar la config sin rebuildear
-      - type: bind
-        source: ./instalador.yaml
-        target: ${PROYECTO_DIR:?err}/instalador.yaml
       # La configuración de Apache
       - type: volume
         source: apache-conf
@@ -24,10 +20,10 @@ services:
       - type: volume
         source: toba-data
         target: ${TOBA_DIR:?err}
-      # Proyecto
+      # Proyectos
       - type: volume
         source: proyecto-data
-        target: ${PROYECTO_DIR:?err}
+        target: ${PROYECTO_DIR:?err}/proyectos
     depends_on:
       - db
     environment:

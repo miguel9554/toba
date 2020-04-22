@@ -13,25 +13,25 @@ docker-compose up -d
 Instalar Toba. Hay que cargar los parámetros a mano
 
 ```bash
-docker-compose exec toba bin/toba instalacion instalar
+docker-compose exec toba vendor/siu-toba/framework/bin/toba instalacion instalar
 ```
 
 Despues de instalar, cargar en apache
 
 ```bash
-docker-compose exec toba ln -s /toba/toba.conf /etc/apache2/sites-enabled/toba_3_3.conf
+docker-compose exec toba ln -s /srv/toba/instalacion/toba.conf /etc/apache2/sites-enabled/toba_3_3.conf
 ```
 
 Para instalar el proyecto
 
 ```bash
-docker-compose exec toba bin/toba proyecto crear -p proyecto_tuto -d /srv/toba
+docker-compose exec toba vendor/siu-toba/framework/bin/toba proyecto crear -p proyecto_tuto -d /srv/toba/proyectos/proyecto_tuto
 ```
 
 Modificar los permisos para que Toba no joda
 
 ```bash
-chown -R www-data:www-data /toba
+docker-compose exec toba chown -R www-data:www-data /srv/toba/instalacion
 ```
 
 Reiniciar Apache
