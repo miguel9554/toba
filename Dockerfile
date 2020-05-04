@@ -12,8 +12,7 @@ RUN apt-get update && apt-get install -y \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
     tee /etc/apt/sources.list.d/yarn.list && apt-get update && \
-    apt-get install -y yarn && \
-    a2enmod rewrite && service apache2 restart
+    apt-get install -y yarn && a2enmod rewrite
 
 # Instalamos Composer desde la imagen oficial
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -38,6 +37,7 @@ ADD composer.json $PROYECTO_DIR
 # Instalamos las dependencias
 RUN composer install
 
+# Hacemos coincidir el UID de www-data con el del host para evitar
+# problemas de propiedad con el bind
 ARG UID
-RUN echo $UID
 RUN usermod -u $UID www-data && groupmod -g $UID www-data && service apache2 restart
