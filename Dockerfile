@@ -38,3 +38,6 @@ ADD composer.json $PROYECTO_DIR
 # Instalamos las dependencias
 RUN composer install
 
+ARG UID
+RUN echo $UID
+RUN usermod -u $UID www-data && groupmod -g $UID www-data && service apache2 restart

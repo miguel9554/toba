@@ -40,3 +40,8 @@ Reiniciar Apache
 docker-compose exec toba service apache2 reload
 ```
 
+Para exportar al instancia
+
+```bash
+docker-compose exec toba vendor/siu-toba/framework/bin/toba proyecto exportar -p proyecto_tuto -i toba_tuto
+```
