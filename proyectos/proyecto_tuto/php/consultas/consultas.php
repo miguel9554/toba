@@ -38,7 +38,7 @@ class consultas
 		$where = null;
 		if(!is_null($id))
 		{
-			$where = "id_autor = ".quote($id);
+			$where = "li.id_autor = ".quote($id);
 		}
 		$datos = self::get_listado_libros($where);
 		if(isset($datos['0']))
