@@ -3,5 +3,5 @@ CREATE TABLE prestamos_maestro(
 	id_usuario INTEGER REFERENCES usuarios(id_usuario),
         fecha_salida DATE NOT NULL,
         fecha_devolucion DATE NOT NULL,
-        fecha_carga DATE NOT NULL
+        fecha_carga DATE NOT NULL DEFAULT NOW()
 );
