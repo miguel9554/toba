@@ -1,3 +1,4 @@
 *.swp
 .env
 instalador.yaml
+vendor/
