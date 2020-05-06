@@ -4,10 +4,44 @@ class ci_interno extends proyecto_tuto_ci
 	protected $s__prestamo_seleccionado;
         protected $hay_maestro = true;
 
+        protected $s__datos_prestamo = array();
+        protected $s__datos_detalle = array();
+
+
+        function ini__operacion()
+        {
+        }
+
+        function evt__procesar()
+        {
+          // Agregar o modificar los datos del maestro
+          if(!isset($this->s__prestamo_seleccionado))
+          {
+            $this->controlador()->get_tabla('prestamo')->nueva_fila($this->s__datos_prestamo);
+          } else {
+            $id = $this->s__prestamo_seleccionado;
+            $this->controlador()->get_tabla('prestamo')->modificar_fila($id, $this->s__datos_prestamo);
+          }
+          $this->controlador()->get_tabla('prestamo')->set_cursor($id);
+          // Procesar las filas del detalle
+          if ($this->hay_maestro){
+            $this->controlador()->get_tabla('detalle')->procesar_filas($this->s__datos_detalle);
+          }
+          $this->evt__cancelar();
+        }
+
+        function evt__cancelar()
+        {
+          unset($this->s__prestamo_seleccionado);
+          $this->controlador()->get_tabla('prestamo')->resetear_cursor();
+          unset($this->s__datos_prestamo);
+          unset($this->s__datos_detalle);
+        }
+
 	//-----------------------------------------------------------------------------------
 	//---- Configuraciones --------------------------------------------------------------
 	//-----------------------------------------------------------------------------------
-
+/*
 	function evt__detalle__entrada()
 	{
           if(!isset($this->s__prestamo_seleccionado))
@@ -16,7 +50,7 @@ class ci_interno extends proyecto_tuto_ci
             $this->controlador()->get_tabla('detalle')->resetear_cursor();
           }
 	}
-
+ */
 	//-----------------------------------------------------------------------------------
 	//---- cuadro -----------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------
@@ -32,7 +66,6 @@ class ci_interno extends proyecto_tuto_ci
 	{
           $this->s__prestamo_seleccionado = $seleccion;
           $this->controlador()->get_tabla('prestamo')->set_cursor($seleccion);
-          $this->set_pantalla('detalle');
 	}
 
         function evt__cuadro__borrar($seleccion)
@@ -51,11 +84,16 @@ class ci_interno extends proyecto_tuto_ci
 
 	function conf__fomr_maestro(proyecto_tuto_ei_formulario $form)
 	{
+          /*
 		if($this->controlador()->get_tabla('prestamo')->get_cantidad_filas() > 0 && isset($this->s__prestamo_seleccionado))
 		{
 			$datos = $this->controlador()->get_tabla('prestamo')->get_fila($this->s__prestamo_seleccionado);
                         $form->set_datos($datos);
 		}
+           */
+          if(!empty($this->s__datos_prestamo)){
+            $form->set_datos($this->s__datos_prestamo);
+          }
 	}
 
 	function evt__fomr_maestro__modificacion($datos)
@@ -64,6 +102,10 @@ class ci_interno extends proyecto_tuto_ci
             $this->hay_maestro = false;
             return;
           }
+
+          $this->s__datos_prestamo = $datos;
+
+          /*
 		if(isset($this->prestamo_selecionado))
 		{
 			$id = $this->s__prestamo_seleccionado;
@@ -77,6 +119,7 @@ class ci_interno extends proyecto_tuto_ci
 			$id = $this->controlador()->get_tabla('prestamo')->nueva_fila($datos);
 		}
                 $this->controlador()->get_tabla('prestamo')->set_cursor($id);
+           */
 	}
 
 	//-----------------------------------------------------------------------------------
@@ -98,27 +141,6 @@ class ci_interno extends proyecto_tuto_ci
 		$this->controlador()->get_tabla('usuarios')->set($datos);
 	}
 
-	//-----------------------------------------------------------------------------------
-	//---- from_detalle -----------------------------------------------------------------
-	//-----------------------------------------------------------------------------------
-
-	function conf__from_detalle(proyecto_tuto_ei_formulario_ml $form_ml)
-	{
-          if (isset($this->s__prestamo_seleccionado))
-          {
-            $datos = $this->controlador()->get_tabla('detalle')->get_filas();
-            print_r($datos);
-          }
-	}
-
-	function evt__from_detalle__modificacion($datos)
-	{
-          if ($this->hay_maestro)
-          {
-            $this->controlador->get_tabla('detalle')->procesar_filas($datos);
-          }
-	}
-
         function validar_prestamo($datos)
         {
           if (empty($datos))
@@ -134,5 +156,35 @@ class ci_interno extends proyecto_tuto_ci
           }
           return false;
         }
+
+	//-----------------------------------------------------------------------------------
+	//---- from_detalle -----------------------------------------------------------------
+	//-----------------------------------------------------------------------------------
+
+	function conf__from_detalle(proyecto_tuto_ei_formulario_ml $form_ml)
+	{
+          /*
+          if (isset($this->s__prestamo_seleccionado))
+          {
+            $datos = $this->controlador()->get_tabla('detalle')->get_filas();
+            $form_ml->set_datos();
+          }
+          */
+          if(!empty($this->s__datos_detalle)){
+            $form_ml->set_datos($this->s__datos_detalle);
+          }
+	}
+
+	function evt__from_detalle__modificacion($datos)
+	{
+          /*
+          if ($this->hay_maestro)
+          {
+            $this->controlador->get_tabla('detalle')->procesar_filas($datos);
+          }
+           */
+          $this->s__datos_detalle= $datos;
+	}
+
 }
 ?>

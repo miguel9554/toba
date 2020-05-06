@@ -48,6 +48,17 @@ class consultas
 		return '';
 	}
 
+        static function get_cascada_libro($id=null)
+        {
+          $datos = array();
+          if(!is_null($id))
+          {
+            $where = 'gen.id_genero = ' . quote($id);
+            $datos = self::get_listado_libros($where);
+          }
+          return $datos;
+        }
+
 	static function get_nombre_autor($id=null)
 	{
 		$where = null;
@@ -84,4 +95,29 @@ class consultas
 
 		return toba::db()->consultar($sql);
 	}
+
+        static function get_listado_prestamos($filtro = null)
+        {
+          $where = array();
+          if(isset($filtro['nombre'])){
+            $where[] = 'li.nombre ILIKE ' . quote("{filtro['nombre']['valor']}%");
+          }
+          if(isset($filtro['id_libro'])){
+            $where[] = ' li.id_libro = '. quote($filtro['id_libro']['valor']);
+          }
+
+          $sql = ' SELECT   pm.id_prestamo,
+                            id_usuario,
+                            fecha_salida,
+                            fecha_devolucion
+            FROM prestamos_maestro pm
+            JOIN prestamos_detalle pd ON pm.id_prestamo = pd.id_prestamo
+            JOIN libros li ON pd.id_libro = li.id_libro ';
+          if (!empty($where)){
+            $sql = \sql_concatenar_where($sql, $where);
+          }
+          $sql .= 'GROUP BY 1,2,3,4 ';
+          return toba::db()->consultar($sql);
+        }
+        
 }
