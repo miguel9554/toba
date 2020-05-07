@@ -21,25 +21,27 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 ENV TERM xterm-256color
 
 # Parámetros de la imagen
-ARG APP_ENVIRONMENT
-ARG PROYECTO_DIR
+ARG ES_PRODUCCION
+ARG BASE_DIR
 
 # Usamos la configuración por defecto que trae la imagen
-RUN if [ $APP_ENVIRONMENT = "prod" ]; \
+RUN if [ "$ES_PRODUCCION" = 1 ]; \
     then export DEFAULT_PHP_INI_ENV='production'; \
     else export DEFAULT_PHP_INI_ENV='development'; fi && \
     mv "$PHP_INI_DIR/php.ini-${DEFAULT_PHP_INI_ENV}" "$PHP_INI_DIR/php.ini"
 
 # Copiamos el código fuente
-WORKDIR $PROYECTO_DIR
-ADD composer.json $PROYECTO_DIR
+WORKDIR $BASE_DIR
+ADD composer.json $BASE_DIR
 
 # Instalamos las dependencias
 RUN composer install
+
+# Agergamos bin y linkeamos el ejecutable toba
+ADD bin $BASE_DIR/bin
+RUN ln -s ${BASE_DIR}/vendor/siu-toba/framework/bin/toba ${BASE_DIR}/bin/toba
 
 # Hacemos coincidir el UID de www-data con el del host para evitar
 # problemas de propiedad con el bind
 ARG UID
 RUN usermod -u $UID www-data && groupmod -g $UID www-data && service apache2 restart
-RUN mkdir ${PROYECTO_DIR}/bin && ln -s ${PROYECTO_DIR}/vendor/siu-toba/framework/bin/toba ${PROYECTO_DIR}/bin/toba
-

@@ -2,13 +2,13 @@ version: '3.7'
 
 services:
   toba:
-    image: ${REGISTRY_HOSTNAME?err}toba:${APP_ENVIRONMENT:?err}
+    image: toba:dev
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - PROYECTO_DIR=${PROYECTO_DIR:?err}
-        - APP_ENVIRONMENT=${APP_ENVIRONMENT:?err}
+        - BASE_DIR=${BASE_DIR:?err}
+        - ES_PRODUCCION=${ES_PRODUCCION:?err}
         - UID=${UID:?err}
     ports:
       - 8000:80
@@ -20,16 +20,23 @@ services:
       # Instalación de Toba
       - type: volume
         source: toba-data
-        target: ${TOBA_DIR:?err}
+        target: ${BASE_DIR:?err}/instalacion
       # Proyectos
       - type: bind
         source: ./proyectos
-        target: ${PROYECTO_DIR:?err}/proyectos
+        target: ${BASE_DIR:?err}/proyectos
     depends_on:
       - db
     environment:
-      TOBA_INSTANCIA: toba_tuto
-      TOBA_INSTALACION_DIR: ${TOBA_DIR:?err}
+      TOBA_INSTANCIA: ${TOBA_INSTANCIA_NOMBRE:?err}
+      TOBA_INSTALACION_DIR: ${BASE_DIR:?err}/instalacion
+      DB_USER: ${DB_USER:?err}
+      DB_PASSWORD: ${DB_PASSWORD:?err}
+      TOBA_USUARIO: ${TOBA_USUARIO:?err}
+      TOBA_PASSWORD: ${TOBA_PASSWORD:?err}
+      ID_DESARROLLADOR: ${ID_DESARROLLADOR:?err}
+      ES_PRODUCCION: ${ES_PRODUCCION:?err}
+      TOBA_SCHEMA_NOMBRE: ${TOBA_SCHEMA_NOMBRE:?err}
   db:
     image: postgres:9.6.17
     environment:
@@ -51,5 +58,4 @@ volumes:
   db-data:
   toba-data:
   apache-conf:
-  proyecto-data:
 
