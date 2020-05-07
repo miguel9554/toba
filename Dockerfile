@@ -41,3 +41,5 @@ RUN composer install
 # problemas de propiedad con el bind
 ARG UID
 RUN usermod -u $UID www-data && groupmod -g $UID www-data && service apache2 restart
+RUN mkdir ${PROYECTO_DIR}/bin && ln -s ${PROYECTO_DIR}/vendor/siu-toba/framework/bin/toba ${PROYECTO_DIR}/bin/toba
+
