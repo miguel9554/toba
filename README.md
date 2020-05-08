@@ -11,13 +11,8 @@ Levantar todo con docker compose
 docker-compose up -d
 ```
 
-Instalar Toba
+Con `regenerar_toba` se instala Toba y se cargan todos los proyectos que se encuentren en `proyectos`
 ```bash
-docker-compose exec toba bin/instalar_toba.sh
-```
-
-Para cargar los proyectos del repositorio
-```bash
-docker-compose exec toba bin/cargar_proyectos.sh
+docker-compose exec toba bin/regenerar_toba
 ```
 

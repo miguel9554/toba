@@ -22,10 +22,18 @@ bin/toba instalacion_silenciosa instalar \
 bin/toba proyecto cargar -p toba_editor -a 1
 bin/toba proyecto cargar -p toba_usuarios -a 1
 bin/toba proyecto cargar -p toba_referencia -a 1
+# Proyectos propios
+for project_path in proyectos/*; do
+	project_name=$(basename $project_path)
+        bin/toba proyecto cargar -p ${project_name} -d ${project_path} -a 1
+done
 
 # Damos los permisos
 chown -R www-data:www-data ${TOBA_INSTALACION_DIR}
 
 # Cargamos el sitio en Apache
 ln -s ${TOBA_INSTALACION_DIR}/toba.conf /etc/apache2/sites-enabled/toba.conf
+
+
+# Recargamos Apache
 service apache2 reload
